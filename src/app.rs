@@ -1,5 +1,3 @@
-// use axum::Router;
-// use axum::routing::get;
 use crate::handlers::health::health;
 use crate::handlers::tasks::create_task;
 use crate::handlers::tasks::get_task;
@@ -9,11 +7,13 @@ use axum::{
     routing::{get, post},
 };
 
+// with_state()はRouterにアプリ全体で共有したいStateを注入するMethod
+// ハンドラでState()というextractorで状態を受け取れる
+
 pub fn route(state: AppState) -> Router {
-    let app = Router::new()
+    Router::new()
         .route("/health", get(health))
         .route("/tasks", post(create_task))
         .route("/tasks/{id}", get(get_task))
-        .with_state(state);
-    app
+        .with_state(state)
 }

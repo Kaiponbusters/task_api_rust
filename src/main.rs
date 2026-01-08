@@ -1,7 +1,4 @@
-use axum;
-
 use crate::state::AppState;
-
 mod app;
 mod handlers;
 mod models;
@@ -15,6 +12,7 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await
         .unwrap();
-
+    // make_service()はIncomingStreamを受け取れるServiceである必要がある。
+    // appはHTTPリクエストを受け取れるがIncomingStreamは受け取れない。
     axum::serve(listener, app).await.unwrap();
 }
