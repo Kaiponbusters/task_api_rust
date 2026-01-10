@@ -3,6 +3,7 @@ mod app;
 mod handlers;
 mod models;
 mod state;
+mod error;
 
 #[tokio::main]
 async fn main() {
