@@ -5,14 +5,16 @@ use axum::{
 };
 use chrono::Utc;
 
-use crate::models::CreateTaskRequest;
+use crate::error::ApiError;
 use crate::models::Task;
 use crate::state::AppState;
+use crate::{error::validate_title, models::CreateTaskRequest};
 
 pub async fn create_task(
     State(state): State<AppState>,
     Json(req): Json<CreateTaskRequest>,
-) -> (StatusCode, Json<Task>) {
+) -> Result<(StatusCode, Json<Task>), ApiError> {
+    validate_title(&req.title)?;
     //NOTE: 今は設計凍結。V/E設計はあとのスプリント.
     let mut id_guard = state.next_id.write().await;
     let id = *id_guard;
@@ -29,16 +31,14 @@ pub async fn create_task(
     state.tasks.write().await.insert(id, task.clone());
 
     // Return値
-    (StatusCode::CREATED, Json(task))
+    Ok((StatusCode::CREATED, Json(task)))
 }
 
 pub async fn get_task(
     State(state): State<AppState>,
     Path(id): Path<i64>,
-) -> Result<Json<Task>, StatusCode> {
+) -> Result<Json<Task>, ApiError> {
     let guard = state.tasks.read().await;
-    match guard.get(&id) {
-        Some(task) => Ok(Json(task.clone())),
-        None => Err(StatusCode::NOT_FOUND),
-    }
+    let task = guard.get(&id).cloned().ok_or(ApiError::NotFound)?;
+    Ok(Json(task))
 }

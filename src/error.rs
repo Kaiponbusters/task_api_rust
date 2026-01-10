@@ -38,3 +38,13 @@ impl IntoResponse for ApiError {
     }
 }
 
+pub fn validate_title(title: &str) ->  Result<(), ApiError> {
+    let t = title.trim();
+    if t.is_empty() {
+        return Err(ApiError::BadRequest("title is empty".to_string()));
+    }
+    if t.chars().count() > 100 {
+        return Err(ApiError::BadRequest("title is too long".to_string()));
+    }
+    Ok(())
+}
