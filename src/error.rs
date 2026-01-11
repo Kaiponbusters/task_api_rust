@@ -1,10 +1,10 @@
+use crate::repo::RepoError;
 use axum::{
     Json,
     http::StatusCode,
     response::{IntoResponse, Response},
 };
 use serde::Serialize;
-use crate::repo::RepoError;
 
 #[derive(Debug, Serialize)]
 pub struct ErrorBody {
@@ -44,8 +44,6 @@ impl From<RepoError> for ApiError {
         ApiError::Internal(err.to_string())
     }
 }
-
-
 
 pub fn validate_title(title: &str) -> Result<(), ApiError> {
     let t = title.trim();

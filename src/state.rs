@@ -1,7 +1,7 @@
 use std::{collections::HashMap, sync::Arc};
-
-use crate::models::Task;
 use tokio::sync::RwLock;
+
+use crate::repo::TaskRepository;
 
 // Arc : スレッド間で共有できる参照カウント型スマートポインタ
 // axum + tokio環境では、リクエストごとにハンドラが並列実行される。
@@ -14,7 +14,7 @@ use tokio::sync::RwLock;
 #[derive(Clone)]
 pub struct AppState {
     //Inmemory "DB"
-    pub tasks: Arc<RwLock<HashMap<i64, Task>>>,
+    pub repo: Arc<dyn TaskRepository + Send + Sync>,
     pub next_id: Arc<RwLock<i64>>,
 }
 impl AppState {

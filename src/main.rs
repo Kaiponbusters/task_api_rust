@@ -1,10 +1,10 @@
 use crate::state::AppState;
 mod app;
+mod error;
 mod handlers;
 mod models;
-mod state;
-mod error;
 mod repo;
+mod state;
 
 #[tokio::main]
 async fn main() {
