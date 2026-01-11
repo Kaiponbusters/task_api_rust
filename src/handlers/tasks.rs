@@ -5,9 +5,9 @@ use axum::{
 };
 use chrono::Utc;
 
-use crate::error::ApiError;
 use crate::models::Task;
 use crate::state::AppState;
+use crate::{error::ApiError, repo};
 use crate::{error::validate_title, models::CreateTaskRequest};
 
 pub async fn create_task(
@@ -28,7 +28,7 @@ pub async fn create_task(
         created_at: Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Secs, true),
     };
 
-    state.tasks.write().await.insert(id, task.clone());
+    repo::insert_task(&state, &task, false).await?;
 
     // Return値
     Ok((StatusCode::CREATED, Json(task)))
